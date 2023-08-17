@@ -1,0 +1,5 @@
+.env
+.idea
+postgres-data
+.pytest_cache
+test.sqlite
