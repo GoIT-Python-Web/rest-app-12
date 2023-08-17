@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 
+from src.conf.config import config
 from src.routes import todos, auth, users
 
 app = FastAPI()
@@ -53,8 +54,8 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 app.include_router(auth.router)
-app.include_router(todos.router, prefix='/api')
-app.include_router(users.router, prefix='/api')
+app.include_router(todos.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
 
 
 async def task():
@@ -71,9 +72,17 @@ async def read_root(background_tasks: BackgroundTasks):
 
 @app.on_event("startup")
 async def startup():
-    r = await redis.Redis(host='localhost', port=6379, db=0, encoding="utf-8", decode_responses=True)
+
+    print(config.redis_host,config.redis_port,config.redis_password)
+    r = await redis.Redis(
+        host=config.redis_host,
+        port=config.redis_port,
+        db=0,
+        encoding="utf-8",
+        password=config.redis_password,
+    )
     await FastAPILimiter.init(r)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run("main:app", host="localhost", reload=True, log_level="info")
