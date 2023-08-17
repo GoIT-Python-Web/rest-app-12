@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 from ipaddress import ip_address
 from typing import Callable
@@ -85,4 +86,4 @@ async def startup():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="localhost", reload=True, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT")), log_level="info")
